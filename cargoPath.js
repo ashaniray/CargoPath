@@ -71,8 +71,8 @@ var cargoPath = {
 	isLand: function (latitude, longitude) {
 		'use strict';
 
-		var y = mapToGrid.lng2Y(parseInt(longitude, 10)),
-			x = mapToGrid.lat2X(parseInt(latitude, 10)),
+		var y = mapToGrid.lng2Y(parseInt(longitude + 0.5, 10)),
+			x = mapToGrid.lat2X(parseInt(latitude + 0.5, 10)),
 			grid = mapToGrid.getWorld();
 		while (y < 0)
 			y += 360;	
@@ -82,8 +82,8 @@ var cargoPath = {
 	getNearbySea: function(lat, lng) {
 		var EXTENT = 1, i = 0, j = 0;
 
-		lat = parseInt(lat, 10);
-		lng = parseInt(lng, 10);
+		lat = parseInt(lat + 0.5, 10);
+		lng = parseInt(lng + 0.5, 10);
 
 		for (i = 0; i < EXTENT; i += 1) {
 			for (j = 0; j < EXTENT; j += 1) {

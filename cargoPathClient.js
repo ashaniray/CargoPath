@@ -31,8 +31,7 @@ var cargoPathClient = {
 	placeMarker: function (position, map) {
 		'use strict';
 
-		var 
-			lat = position.lat(),
+		var lat = position.lat(),
 			lng = position.lng(),
 			isLand,
 			newPosition,
@@ -82,7 +81,7 @@ var cargoPathClient = {
 			function () {
 				var place = autocomplete.getPlace();
 				cargoPath.map.setCenter(place.geometry.location);
-				cargoPath.map.setZoom(2);
+				cargoPath.map.setZoom(5);
 
 				infowindow.setOptions({position: place.geometry.location});
 				infowindow.setContent('<div><strong>' + place.name
