@@ -31,14 +31,18 @@ var cargoPathClient = {
 	placeMarker: function (position, map) {
 		'use strict';
 
-		var lat = parseInt(position.lat(), 10),
-			lng = parseInt(position.lng(), 10),
+		var 
+			//lat = parseInt(position.lat(), 10),
+			//lng = parseInt(position.lng(), 10),
+			lat = position.lat(),
+			lng = position.lng(),
 			isLand,
 			newPosition,
-			marker;
+			marker, port;
 
-		isLand = cargoPath.isLand(lat, lng);
-		if (isLand === 0) {
+		//isLand = cargoPath.isLand(lat, lng);
+		port = cargoPath.getNearbySea(lat, lng);
+		if (port.lat !== -1 && port.lng != -1) {
 			newPosition = new google.maps.LatLng(lat, lng);
 			marker = new google.maps.Marker({
 				position: newPosition,
@@ -97,12 +101,9 @@ var cargoPathClient = {
 		'use strict';
 
 		if (this.src !== null && this.dest !== null) {
-			cargoPath.drawPath(parseInt(this.src.lat(), 10),
-				parseInt(this.src.lng(), 10),
-				parseInt(this.dest.lat(), 10),
-				parseInt(this.dest.lng(), 10)
+			cargoPath.drawPath(this.src.lat(), this.src.lng(),
+				this.dest.lat(), this.dest.lng()
 				);
-
 		}
 	}
 };

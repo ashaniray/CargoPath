@@ -74,7 +74,30 @@ var cargoPath = {
 		var y = mapToGrid.lng2Y(parseInt(longitude, 10)),
 			x = mapToGrid.lat2X(parseInt(latitude, 10)),
 			grid = mapToGrid.getWorld();
+		while (y < 0)
+			y += 360;	
 		return grid[x][y];
+	},
+
+	getNearbySea: function(lat, lng) {
+		var EXTENT = 1, i = 0, j = 0;
+
+		lat = parseInt(lat, 10);
+		lng = parseInt(lng, 10);
+
+		for (i = 0; i < EXTENT; i += 1) {
+			for (j = 0; j < EXTENT; j += 1) {
+				if (cargoPath.isLand(lat - i, lng - j) === 0)
+					return {lat: lat - i, lng: lng - j};
+				if (cargoPath.isLand(lat + i, lng + j) === 0)
+					return {lat: lat + EXTENT, lng: lng + j};
+				if (cargoPath.isLand(lat + i, lng - j) === 0)
+					return {lat: lat + i, lng: lng - j};
+				if (cargoPath.isLand(lat - i, lng + j) === 0)
+					return {lat: lat - i, lng: lng + j};
+			}
+		}
+		return {lat: -1, lng: -1};
 	},
 
 	getPath: function (latSrc, longSrc, latDest, longDest) {
@@ -107,10 +130,18 @@ var cargoPath = {
 	drawPath: function (latSrc, longSrc, latDest, longDest) {
 		'use strict';
 
-		var seaCoordinates = this.getPath(latSrc, longSrc, latDest, longDest),
+		var srcPort = this.getNearbySea(latSrc, longSrc),
+			destPort = this.getNearbySea(latDest, longDest),
+			seaCoordinates,
 			seaPath;
 
+		if (srcPort.lat !== -1 && srcPort.lng != -1 
+			&& destPort.lat != -1 && destPort.lng !== -1) {
+			seaCoordinates = this.getPath(srcPort.lat, srcPort.lng, destPort.lat, destPort.lng);
+		}
 		if (seaCoordinates.length > 2) {
+			seaCoordinates.splice(0, 0, new google.maps.LatLng(latSrc, longSrc)); 
+			seaCoordinates[seaCoordinates.length] = new google.maps.LatLng(latDest, longDest);
 			seaPath = new google.maps.Polyline(
 				{
 					path: seaCoordinates,
