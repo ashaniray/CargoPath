@@ -19,7 +19,19 @@
 	</head>
 
 	<body onload="cargoPathClient.initialize()">
-		<div>Map Demo</div>
+		<div><h1>Ocean and Sea Path Finding</h1></div>
+		<div>
+		Click on two points on the map so that you get two markers
+		and then click "Draw Path" to obtain the sea path between those
+		two points/markers.
+		<ul>
+		<li>Markers appear only on water or in locations close to sea</li>
+		<li>To delete a path or marker, click on it again.</li>
+		<li>You may use the box below to search for a location or you can click on the map directly to place a marker</li>
+		<li>Delting a marker does not "remove" the internal source/destination points</li>
+		</ul>
+
+		</div>
 		<div>
 			<input id="searchTextField" type="text" size="50">
 			<button onclick="cargoPathClient.drawPath()" > 

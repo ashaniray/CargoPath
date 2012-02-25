@@ -32,15 +32,12 @@ var cargoPathClient = {
 		'use strict';
 
 		var 
-			//lat = parseInt(position.lat(), 10),
-			//lng = parseInt(position.lng(), 10),
 			lat = position.lat(),
 			lng = position.lng(),
 			isLand,
 			newPosition,
 			marker, port;
 
-		//isLand = cargoPath.isLand(lat, lng);
 		port = cargoPath.getNearbySea(lat, lng);
 		if (port.lat !== -1 && port.lng != -1) {
 			newPosition = new google.maps.LatLng(lat, lng);
