@@ -71,26 +71,24 @@ var cargoPath = {
 	isLand: function (latitude, longitude) {
 		'use strict';
 
-		var y = mapToGrid.lng2Y(parseInt(longitude + 0.5, 10)),
-			x = mapToGrid.lat2X(parseInt(latitude + 0.5, 10)),
+		var y = mapToGrid.lng2Y(parseInt(longitude, 10)),
+			x = mapToGrid.lat2X(parseInt(latitude, 10)),
 			grid = mapToGrid.getWorld();
-		while (y < 0)
-			y += 360;	
 		return grid[x][y];
 	},
 
 	getNearbySea: function(lat, lng) {
-		var EXTENT = 1, i = 0, j = 0;
+		var EXTENT = 3, i = 0, j = 0;
 
 		lat = parseInt(lat + 0.5, 10);
 		lng = parseInt(lng + 0.5, 10);
 
-		for (i = 0; i < EXTENT; i += 1) {
+		for (i = -1; i < EXTENT; i += 1) {
 			for (j = 0; j < EXTENT; j += 1) {
 				if (cargoPath.isLand(lat - i, lng - j) === 0)
 					return {lat: lat - i, lng: lng - j};
 				if (cargoPath.isLand(lat + i, lng + j) === 0)
-					return {lat: lat + EXTENT, lng: lng + j};
+					return {lat: lat + i, lng: lng + j};
 				if (cargoPath.isLand(lat + i, lng - j) === 0)
 					return {lat: lat + i, lng: lng - j};
 				if (cargoPath.isLand(lat - i, lng + j) === 0)
@@ -98,6 +96,15 @@ var cargoPath = {
 			}
 		}
 		return {lat: -1, lng: -1};
+	},
+
+	resultToSeaCoordinates: function (seaCoordinates, result, grid) {
+		for (i = 0; i < result.length; i += 1) {
+			seaCoordinates[seaCoordinates.length] = new google.maps.LatLng(
+				grid.X2lat(result[i].x),
+				grid.Y2lng(result[i].y)
+			);
+		}
 	},
 
 	getPath: function (latSrc, longSrc, latDest, longDest) {
@@ -112,16 +119,34 @@ var cargoPath = {
 			start = graph.nodes[src_x][src_y],
 			end = graph.nodes[dest_x][dest_y],
 			result,
+			graph_pacific = new Graph(pacificToGrid.getWorld()),
+			src_x_pacific = pacificToGrid.lat2X(latSrc),
+			src_y_pacific = pacificToGrid.lng2Y(longSrc),
+			dest_x_pacific = pacificToGrid.lat2X(latDest),
+			dest_y_pacific = pacificToGrid.lng2Y(longDest),
+			start_pacific = graph_pacific.nodes[src_x_pacific][src_y_pacific],
+			end_pacific = graph_pacific.nodes[dest_x_pacific][dest_y_pacific],
+			result_pacific,
+			grid = mapToGrid,
 			i;
 
 		result = astar.search(graph.nodes, start, end, this.earth_distance);
-
-		for (i = 0; i < result.length; i += 1) {
-			seaCoordinates[seaCoordinates.length] = new google.maps.LatLng(
-				mapToGrid.X2lat(result[i].x),
-				mapToGrid.Y2lng(result[i].y)
-			);
+		result_pacific = astar.search(graph_pacific.nodes, start_pacific, end_pacific, this.earth_distance);
+		if (result_pacific.length > 0) {
+			if (result.length > 0) {
+				if (result[result.length - 1].g > 
+						result_pacific[result_pacific.length - 1].g) {
+					result = result_pacific;
+					grid = pacificToGrid;
+				}
+			}
+			if (result.length === 0) {
+				result = result_pacific;
+				grid = pacificToGrid;
+			}
 		}
+
+		this.resultToSeaCoordinates(seaCoordinates, result, grid);
 
 		seaCoordinates[seaCoordinates.length] =  new google.maps.LatLng(latDest, longDest);
 		return seaCoordinates;

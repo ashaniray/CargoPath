@@ -202,14 +202,14 @@ var mapToGrid = {
 
 	lat2X: function (lat) {
 		'use strict';
-		var y = parseInt(90 - lat,  10);
+		var y = parseInt(90 - lat - 0.5,  10);
 		return y;
 	},
 
 	lng2Y: function (lng) {
 		'use strict';
 
-		var x = parseInt(lng + 180,  10);
+		var x = parseInt(lng + 0.5 + 180,  10);
 		return x;
 	},
 
