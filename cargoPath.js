@@ -22,8 +22,8 @@ var cargoPath = {
 		'use strict';
 
 		var myOptions = {
-			center: new google.maps.LatLng(23, 88),
-			zoom: 2,
+			center: new google.maps.LatLng(20, -20),
+			zoom: 3,
 			mapTypeId: google.maps.MapTypeId.ROADMAP
 		};
 		this.map = new google.maps.Map(document.getElementById("map_canvas"),
