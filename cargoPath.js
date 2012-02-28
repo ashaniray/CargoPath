@@ -78,7 +78,7 @@ var cargoPath = {
 	},
 
 	getNearbySea: function(lat, lng) {
-		var EXTENT = 3, i = 0, j = 0;
+		var EXTENT = 1, i = 0, j = 0;
 
 		lat = parseInt(lat + 0.5, 10);
 		lng = parseInt(lng + 0.5, 10);
