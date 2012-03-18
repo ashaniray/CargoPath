@@ -78,22 +78,27 @@ var cargoPath = {
 	},
 
 	getNearbySea: function(lat, lng) {
-		var EXTENT = 1, i = 0, j = 0;
+		var EXTENT = 2, i = 0, j = 0;
 
 		lat = parseInt(lat + 0.5, 10);
 		lng = parseInt(lng + 0.5, 10);
 
-		for (i = -1; i < EXTENT; i += 1) {
-			for (j = 0; j < EXTENT; j += 1) {
-				if (cargoPath.isLand(lat - i, lng - j) === 0)
-					return {lat: lat - i, lng: lng - j};
-				if (cargoPath.isLand(lat + i, lng + j) === 0)
-					return {lat: lat + i, lng: lng + j};
-				if (cargoPath.isLand(lat + i, lng - j) === 0)
-					return {lat: lat + i, lng: lng - j};
-				if (cargoPath.isLand(lat - i, lng + j) === 0)
-					return {lat: lat - i, lng: lng + j};
+		var points = [ ];
+
+		for (i = -EXTENT; i < EXTENT + 1; i += 1) {
+			for (j = -EXTENT; j < EXTENT + 1; j += 1) {
+				points[points.length] = {x:i, y:j};
 			}
+		}
+		points.sort(function (first, second) { 
+			var dist1 = (first.x * first.x) + (first.y * first.y);
+			var dist2 = (second.x * second.x) + (second.y * second.y);
+			return dist1 - dist2;
+			});
+
+		for (i = 0; i < points.length; i += 1) {
+			if (cargoPath.isLand(lat + points[i].x, lng + points[i].y) === 0)
+				return {lat: lat + points[i].x, lng: lng + points[i].y };
 		}
 		return {lat: -1, lng: -1};
 	},
