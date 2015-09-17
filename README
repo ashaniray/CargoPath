@@ -3,5 +3,8 @@ CargoPath.js is the main file.
 CargoPathClient.js is a sample client code.
 Currently the precision of all calcuations is 1 degress lat/lng.
 
+The file is hosted at: http://ashaniray.github.io/CargoPath/
+
+
 
 
